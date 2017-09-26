@@ -36,9 +36,12 @@ def post_detail(request, pk):
     }
     return render(request, 'blog/post_detail.html', context)
 
-# Template(View) 구현
-# 실제 템플릿파일 생성
-# 'post'라는 변수를 이용해 Post객체의 내용을 출력
 
-# UrlResolver(urls.py)
-# /post/detail/ url을 'post_detail'뷰와 연결
+def post_add(request):
+    if request.method == 'POST':
+        return HttpResponse('POST request')
+    elif request.method == 'GET':
+        context = {
+
+        }
+        return render(request, 'blog/post_form.html', context)
