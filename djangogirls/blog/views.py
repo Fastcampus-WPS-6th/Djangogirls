@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from .models import Post
@@ -17,9 +18,18 @@ def post_list(request):
 # post_detail기능을 하는 함수를 구현
 # 'post'라는 key로 Post.objects.first()에 해당하는 Post객체를 전달
 # 템플릿은 'blog/post_detail.html'을 사용
-def post_detail(request):
+def post_detail(request, pk):
     # Post인스턴스 1개만 가져옴, 변수명은 posts가 아닌 단일객체를 나타내는 post사용
-    post = Post.objects.first()
+
+    # get에 실패했을때 발생하는 예외
+    #   Post.DoesNotExist
+    # HTTP로 문자열을 돌려주려면
+    #   HttpResponse
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return HttpResponse('No post', status=404)
+
     # 'post'key값으로 Post인스턴스 하나 전달
     context = {
         'post': post,
