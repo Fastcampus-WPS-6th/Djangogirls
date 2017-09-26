@@ -57,7 +57,7 @@ def post_add(request):
     #       (POST요청에서만 동작해야함)
     #       -> pk에 해당하는 Post를 삭제하고, post_list페이지로 이동
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('title') and request.POST.get('content'):
         # request.POST(dict형 객체)에서 'title', 'content'키에 해당하는 value를 받아
         # 새 Post객체를 생성 (save() 호출없음. 단순 인스턴스 생성)
         # 생성한 후에는 해당 객체의 title, content를 HttpResponse로 전달
@@ -75,7 +75,7 @@ def post_add(request):
         )
         post.publish()
         return HttpResponse(f'{post.title}, {post.content}')
-    elif request.method == 'GET':
+    else:
         context = {
 
         }
