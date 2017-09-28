@@ -57,7 +57,25 @@ def post_add(request):
     #       (POST요청에서만 동작해야함)
     #       -> pk에 해당하는 Post를 삭제하고, post_list페이지로 이동
 
-    if request.method == 'POST' and request.POST.get('title') and request.POST.get('content'):
+    # title이나 content중 하나만 왔을 경우,
+    # 다시 입력페이지로 돌아가지만 채웠던 내용은 남도록 처리
+    #   1. 아래 두 내용을 변수로 할당
+    #     request.POST.get('title')
+    #     request.POST.get('content')
+    #   2. 둘 중 하나만 있을 경우를 if문의 조건으로 할당
+    #   3. 변수로 할당한 위 값들을 context를 이용해 넘겨줌 <- render()
+    #       if POST:
+    #           Only POST process
+    #           if valid POST request:
+    #               return redirect()
+    #       else:
+    #           Only GET process
+    #       return render()
+    #   4. 템플릿에서는 context에 위 변수들이 올 경우 input들의 'value'속성 값으로 할당
+    #       textarea는 내용을 채움
+    #           <input value="내용">
+    #           <textarea>실제내용</textarea>
+    if request.method == 'POST':
         # request.POST(dict형 객체)에서 'title', 'content'키에 해당하는 value를 받아
         # 새 Post객체를 생성 (save() 호출없음. 단순 인스턴스 생성)
         # 생성한 후에는 해당 객체의 title, content를 HttpResponse로 전달
@@ -65,32 +83,32 @@ def post_add(request):
         # title이나 content값이 오지 않았을 경우에는 객체를 생성하지 않고 다시 작성페이지로 이동 (render또는 redirect)
         #   extra) 작성페이지로 이동 시 '값을 입력해주세요'라는 텍스트를 어딘가에 표시 (render)
         #   extra*****) Bootstrap을 사용해서 modal띄우기
-        title = request.POST['title']
-        content = request.POST['content']
+        title = request.POST.get('title')
+        content = request.POST.get('content')
         is_publish = bool(request.POST.get('is_publish'))
-
         author = User.objects.get(username='lhy')
-        post = Post.objects.create(
-            author=author,
-            title=title,
-            content=content,
-        )
-        if is_publish:
-            post.publish()
-        else:
-            post.save()
-            # return HttpResponseRedirect(f'/post/{post.pk}')
-            # return redirect('post_detail', post.pk)
-            # return redirect('post_detail', pk=post.pk)
 
-            # Detail화면을 보여주는 작업은 post_detail이 가지고 있으므로 해당 뷰로 redirect시켜야함
-            # return post_detail(request, post.pk)
-            # return render(request, 'blog/post_detail.html', {'post': post})
-    else:
+        # title과 content가 모두 전달되었을때만 Post생성
+        if title and content:
+            post = Post.objects.create(
+                author=author,
+                title=title,
+                content=content,
+            )
+            if is_publish:
+                post.publish()
+            else:
+                post.save()
+            return redirect('post_detail', pk=post.pk)
+
         context = {
-
+            'title': title,
+            'content': content,
         }
-        return render(request, 'blog/post_form.html', context)
+    else:
+        context = {}
+    
+    return render(request, 'blog/post_form.html', context)
 
 
 def post_delete(request, pk):
