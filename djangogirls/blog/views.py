@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.utils import timezone
 
 User = get_user_model()
@@ -80,7 +80,13 @@ def post_add(request):
             post.publish()
         else:
             post.save()
-        return HttpResponse(f'{post.title}, {post.content}')
+        # return HttpResponseRedirect(f'/post/{post.pk}')
+        # return redirect('post_detail', post.pk)
+        # return redirect('post_detail', pk=post.pk)
+
+        # Detail화면을 보여주는 작업은 post_detail이 가지고 있으므로 해당 뷰로 redirect시켜야함
+        # return post_detail(request, post.pk)
+        # return render(request, 'blog/post_detail.html', {'post': post})
     else:
         context = {
 
