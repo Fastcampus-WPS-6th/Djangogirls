@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.utils import timezone
-
-User = get_user_model()
 
 from .models import Post
+
+User = get_user_model()
 
 
 def post_list(request):
@@ -80,15 +79,38 @@ def post_add(request):
             post.publish()
         else:
             post.save()
-        # return HttpResponseRedirect(f'/post/{post.pk}')
-        # return redirect('post_detail', post.pk)
-        # return redirect('post_detail', pk=post.pk)
+            # return HttpResponseRedirect(f'/post/{post.pk}')
+            # return redirect('post_detail', post.pk)
+            # return redirect('post_detail', pk=post.pk)
 
-        # Detail화면을 보여주는 작업은 post_detail이 가지고 있으므로 해당 뷰로 redirect시켜야함
-        # return post_detail(request, post.pk)
-        # return render(request, 'blog/post_detail.html', {'post': post})
+            # Detail화면을 보여주는 작업은 post_detail이 가지고 있으므로 해당 뷰로 redirect시켜야함
+            # return post_detail(request, post.pk)
+            # return render(request, 'blog/post_detail.html', {'post': post})
     else:
         context = {
 
         }
         return render(request, 'blog/post_form.html', context)
+
+
+def post_delete(request, pk):
+    """
+    pk에 해당하는 Post객체를 DB에서 삭제 (QuerySet.delete() 또는 Model.delete() 메서드 사용)
+
+    1. post = 해당 Post객체를 할당
+    2. post객체를 DB에서 삭제
+    3. post_list로 redirect
+    4. urls.py에 연결
+        ex) /posts/3/delete/
+
+    5. POST method로 요청시에만 작업을 처리
+
+    :param request:
+    :param pk: Post의 pk
+    :return: redirect('post_list')
+    """
+    if request.method == 'POST':
+        post = Post.objects.get(pk=pk)
+        post.delete()
+        return redirect('post_list')
+    return HttpResponse('Permission denied', status=403)
