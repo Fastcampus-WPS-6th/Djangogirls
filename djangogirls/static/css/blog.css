@@ -8,6 +8,7 @@ body {
     width: 100%;
 }
 .blog-header .blog-title {
+    float: left;
     margin: 0;
 }
 .blog-header .blog-title > a,
@@ -15,6 +16,20 @@ body {
 .blog-header .blog-title > a:visited {
     color: white;
     text-decoration: none;
+}
+.blog-header .header-right  {
+    float: right;
+}
+.blog-header .header-right > a,
+.blog-header .header-right > a:hover,
+.blog-header .header-right > a:visited {
+    color: white;
+    text-decoration: none;
+    line-height: 33px;
+}
+
+.main-container {
+    padding-top: 10px;
 }
 
 .post-container {

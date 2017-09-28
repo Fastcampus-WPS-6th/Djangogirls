@@ -67,6 +67,7 @@ def post_add(request):
         #   extra*****) Bootstrap을 사용해서 modal띄우기
         title = request.POST['title']
         content = request.POST['content']
+
         author = User.objects.get(username='lhy')
         post = Post(
             author=author,
