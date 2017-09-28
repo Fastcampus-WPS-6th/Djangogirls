@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -67,14 +68,18 @@ def post_add(request):
         #   extra*****) Bootstrap을 사용해서 modal띄우기
         title = request.POST['title']
         content = request.POST['content']
+        is_publish = bool(request.POST.get('is_publish'))
 
         author = User.objects.get(username='lhy')
-        post = Post(
+        post = Post.objects.create(
             author=author,
             title=title,
-            content=content
+            content=content,
         )
-        post.publish()
+        if is_publish:
+            post.publish()
+        else:
+            post.save()
         return HttpResponse(f'{post.title}, {post.content}')
     else:
         context = {
